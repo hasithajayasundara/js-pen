@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import * as esbuild from 'esbuild-wasm'
-  ;
-import { unpkgPathPlugin } from './plugins/unpkg-path-plugin';
+import * as esbuild from 'esbuild-wasm';
+
+import { unpkgPathPlugin, fetchPlugin } from './plugins';
+
 const App = () => {
   const [input, setInput] = useState('');
   const esbuildInitialized = useRef(false);
@@ -16,7 +17,7 @@ const App = () => {
       entryPoints: ['index.js'],
       bundle: true,
       write: false,
-      plugins: [unpkgPathPlugin()],
+      plugins: [unpkgPathPlugin(), fetchPlugin(input)],
       define: {
         global: 'window',
       },
@@ -26,7 +27,7 @@ const App = () => {
 
   const startService = async () => {
     try {
-      await esbuild.initialize({ wasmURL: '/esbuild.wasm' });
+      await esbuild.initialize({ wasmURL: 'https://unpkg.com/esbuild-wasm@0.19.3/esbuild.wasm' });
       esbuildInitialized.current = true;
     } catch (err) {
       console.log(err);
